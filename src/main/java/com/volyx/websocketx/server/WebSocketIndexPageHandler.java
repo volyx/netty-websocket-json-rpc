@@ -26,10 +26,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import static io.netty.handler.codec.http.HttpMethod.GET;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class WebSocketIndexPageHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
@@ -55,18 +52,25 @@ public class WebSocketIndexPageHandler extends SimpleChannelInboundHandler<FullH
         }
 
         // Send the index page
-        if ("/".equals(req.uri()) || "/index.html".equals(req.uri())) {
-            String webSocketLocation = getWebSocketLocation(ctx.pipeline(), req, websocketPath);
-            ByteBuf content = getContent(webSocketLocation);
-            FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
-
-            res.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
-            HttpUtil.setContentLength(res, content.readableBytes());
-
-            sendHttpResponse(ctx, req, res);
-        } else {
+        if (!"/".equals(req.uri()) && !"/index.html".equals(req.uri())) {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND));
         }
+
+//        if (!req.headers().contains("Authorization")) {
+//            final DefaultFullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED);
+//            res.headers().add("WWW-Authenticate", "Basic realm=\"User Visible Realm\"");
+//            sendHttpResponse(ctx, req, res);
+//        }
+//        String authorization = req.headers().get("Authorization");
+
+        String webSocketLocation = getWebSocketLocation(ctx.pipeline(), req, websocketPath);
+        ByteBuf content = getContent(webSocketLocation);
+        FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
+
+        res.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+        HttpUtil.setContentLength(res, content.readableBytes());
+
+        sendHttpResponse(ctx, req, res);
     }
 
     @Override
