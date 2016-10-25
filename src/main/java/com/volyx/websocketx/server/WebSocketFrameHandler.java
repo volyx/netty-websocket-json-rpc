@@ -28,7 +28,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             .create();
 
     @Override
-    protected void channelRead0(final ChannelHandlerContext ctx, final WebSocketFrame frame) throws Exception {
+    protected void channelRead0(final ChannelHandlerContext ctx, final WebSocketFrame frame) {
         if (!(frame instanceof TextWebSocketFrame)) {
             String message = "unsupported frame type: " + frame.getClass().getName();
             throw new UnsupportedOperationException(message);
@@ -37,16 +37,16 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         logger.info("{} received {}", ctx.channel(), stringFrame);
         final Request request = gson.fromJson(stringFrame, RequestImpl.class);
 
-        final Handler handler = HandlerRepository.getInstance().get(request.getMethod());
-        final Response response;
-        if (handler == null) {
-            response = new Response(request.getId(), request.getStartTime(), "ERROR", "Handler " + request.getMethod() + " not found");
-            ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
-            return;
+        final Result result;
+        Response response;
+        try {
+            result = RequestExecutor.getInstance().execute(request);
+            response = new Response(request.getId(), request.getStartTime(), "OK", result);
+        } catch (HandlerNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            response = new Response(request.getId(), request.getStartTime(), "ERROR", e.getMessage());
         }
 
-        final Result result = handler.execute(request);
-        response = new Response(request.getId(), request.getStartTime(), "OK", result);
         ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
     }
 
