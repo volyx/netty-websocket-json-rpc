@@ -1,7 +1,8 @@
 package com.volyx.websocketx.server;
 
+import com.volyx.websocketx.common.Handler;
+import com.volyx.websocketx.repository.HandlerRepository;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -14,8 +15,10 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.net.ssl.SSLException;
 import java.security.cert.CertificateException;
+import java.util.Objects;
 
 public class RpcServer {
     private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
@@ -60,14 +63,24 @@ public class RpcServer {
         } catch (Exception e){
             logger.error("Failed to start server", e);
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                logger.info("Stop server");
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
+            }
+        });
     }
 
-    public void shutdown() {
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
-    }
 
     public static RpcServerBuilder builder() {
         return new RpcServerBuilder();
+    }
+
+    public void addHandler(@Nonnull Handler handler) {
+        Objects.requireNonNull(handler);
+        HandlerRepository.getInstance().add(handler);
     }
 }
