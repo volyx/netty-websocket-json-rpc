@@ -1,11 +1,11 @@
-package com.volyx.websocketx.common;
+package com.volyx.websocketx.json;
 
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.volyx.websocketx.server.ClientRepository;
+import com.volyx.websocketx.repository.ClientRepository;
 
 import java.lang.reflect.Type;
 

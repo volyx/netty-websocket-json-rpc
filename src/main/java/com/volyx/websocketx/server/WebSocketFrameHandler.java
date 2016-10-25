@@ -3,7 +3,9 @@ package com.volyx.websocketx.server;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.volyx.websocketx.common.*;
-import com.volyx.websocketx.handler.HandlerRepository;
+import com.volyx.websocketx.repository.ClientRepository;
+import com.volyx.websocketx.repository.HandlerRepository;
+import com.volyx.websocketx.json.ClientInfoSerializer;
 import com.volyx.websocketx.json.RequestSerializer;
 import com.volyx.websocketx.json.ResponseSerializer;
 import com.volyx.websocketx.json.ResultSerializer;
@@ -27,31 +29,26 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             .create();
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
-        // ping and pong frames already handled
-
-        if (frame instanceof TextWebSocketFrame) {
-            // Send the uppercase string back.
-            String stringFrame = ((TextWebSocketFrame) frame).text();
-            logger.info("{} received {}", ctx.channel(), stringFrame);
-            Request request = gson.fromJson(stringFrame, Request.class);
-
-            Handler handler = HandlerRepository.getInstance().get(request.getMethod());
-            Response response;
-            if (handler == null) {
-                response = new Response("ERROR", "Handler " + request.getMethod() + " not found");
-                ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
-                return;
-            }
-
-            Result result = handler.execute(request);
-
-            response = new Response("OK", result);
-            ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
-        } else {
+    protected void channelRead0(final ChannelHandlerContext ctx, final WebSocketFrame frame) throws Exception {
+        if (!(frame instanceof TextWebSocketFrame)) {
             String message = "unsupported frame type: " + frame.getClass().getName();
             throw new UnsupportedOperationException(message);
         }
+        final String stringFrame = ((TextWebSocketFrame) frame).text();
+        logger.info("{} received {}", ctx.channel(), stringFrame);
+        final Request request = gson.fromJson(stringFrame, Request.class);
+
+        final Handler handler = HandlerRepository.getInstance().get(request.getMethod());
+        final Response response;
+        if (handler == null) {
+            response = new Response("ERROR", "Handler " + request.getMethod() + " not found");
+            ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
+            return;
+        }
+
+        final Result result = handler.execute(request);
+        response = new Response("OK", result);
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
     }
 
     @Override

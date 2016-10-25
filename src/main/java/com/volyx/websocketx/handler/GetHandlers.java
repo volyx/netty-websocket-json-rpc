@@ -3,6 +3,7 @@ package com.volyx.websocketx.handler;
 import com.volyx.websocketx.common.Handler;
 import com.volyx.websocketx.common.Request;
 import com.volyx.websocketx.common.Result;
+import com.volyx.websocketx.repository.HandlerRepository;
 
 import javax.annotation.Nonnull;
 import java.util.List;

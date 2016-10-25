@@ -1,6 +1,9 @@
-package com.volyx.websocketx.handler;
+package com.volyx.websocketx.repository;
 
 import com.volyx.websocketx.common.Handler;
+import com.volyx.websocketx.handler.GetClientHandler;
+import com.volyx.websocketx.handler.GetHandlers;
+import com.volyx.websocketx.handler.HelloHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

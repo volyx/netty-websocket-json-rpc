@@ -1,4 +1,4 @@
-package com.volyx.websocketx.server;
+package com.volyx.websocketx.json;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

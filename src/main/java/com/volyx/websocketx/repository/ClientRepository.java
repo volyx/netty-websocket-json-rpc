@@ -1,4 +1,4 @@
-package com.volyx.websocketx.server;
+package com.volyx.websocketx.repository;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
