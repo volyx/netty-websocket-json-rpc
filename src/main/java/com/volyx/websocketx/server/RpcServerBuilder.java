@@ -7,12 +7,16 @@ public class RpcServerBuilder {
     private boolean enableSsl;
     private int port;
 
-    public void port(int port) {
+    RpcServerBuilder(){}
+
+    public RpcServerBuilder port(int port) {
         this.port = port;
+        return this;
     }
 
-    public void ssl(boolean enableSsl) {
+    public RpcServerBuilder ssl(boolean enableSsl) {
         this.enableSsl = enableSsl;
+        return this;
     }
 
     public RpcServer build() {

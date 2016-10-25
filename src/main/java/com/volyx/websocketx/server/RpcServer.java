@@ -66,4 +66,8 @@ public class RpcServer {
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
     }
+
+    public static RpcServerBuilder builder() {
+        return new RpcServerBuilder();
+    }
 }

@@ -15,8 +15,10 @@ public class ResponseSerializer implements JsonSerializer<Response> {
         JsonObject result = new JsonObject();
 
         result.addProperty("status", response.getStatus());
+        result.addProperty("id", response.getId());
         result.add("result", ctx.serialize(response.getResult(), Result.class));
         result.addProperty("exception", response.getException());
+        result.addProperty("duration", response.getDuration());
 
         return result;
     }

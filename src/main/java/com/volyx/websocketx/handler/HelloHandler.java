@@ -13,7 +13,7 @@ public class HelloHandler implements Handler {
     @Override
     public Result execute(@Nonnull Request request) {
         try {
-            Thread.sleep(5000L);
+            Thread.sleep(3000L);
         } catch (InterruptedException ignored) {
         }
 

@@ -41,13 +41,13 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         final Handler handler = HandlerRepository.getInstance().get(request.getMethod());
         final Response response;
         if (handler == null) {
-            response = new Response("ERROR", "Handler " + request.getMethod() + " not found");
+            response = new Response(request.getId(), request.getStartTime(), "ERROR", "Handler " + request.getMethod() + " not found");
             ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
             return;
         }
 
         final Result result = handler.execute(request);
-        response = new Response("OK", result);
+        response = new Response(request.getId(), request.getStartTime(), "OK", result);
         ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
     }
 
