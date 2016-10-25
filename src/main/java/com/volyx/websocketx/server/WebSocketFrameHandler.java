@@ -3,12 +3,9 @@ package com.volyx.websocketx.server;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.volyx.websocketx.common.*;
+import com.volyx.websocketx.json.*;
 import com.volyx.websocketx.repository.ClientRepository;
 import com.volyx.websocketx.repository.HandlerRepository;
-import com.volyx.websocketx.json.ClientInfoSerializer;
-import com.volyx.websocketx.json.RequestSerializer;
-import com.volyx.websocketx.json.ResponseSerializer;
-import com.volyx.websocketx.json.ResultSerializer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -23,6 +20,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     private Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(Request.class, new RequestSerializer())
+            .registerTypeAdapter(RequestImpl.class, new RequestImplSerializer())
+            .registerTypeAdapter(BatchRequest.class, new BatchRequestSerializer())
             .registerTypeAdapter(Response.class, new ResponseSerializer())
             .registerTypeAdapter(Result.class, new ResultSerializer())
             .registerTypeAdapter(ClientRepository.ClientInfo.class, new ClientInfoSerializer())
@@ -36,7 +35,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
         final String stringFrame = ((TextWebSocketFrame) frame).text();
         logger.info("{} received {}", ctx.channel(), stringFrame);
-        final Request request = gson.fromJson(stringFrame, Request.class);
+        final Request request = gson.fromJson(stringFrame, RequestImpl.class);
 
         final Handler handler = HandlerRepository.getInstance().get(request.getMethod());
         final Response response;
