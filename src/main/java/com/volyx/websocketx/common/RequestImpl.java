@@ -20,6 +20,7 @@ public class RequestImpl implements Request {
     public String getMethod() {
         return method;
     }
+    @Override
     @Nonnull
     public String getParams() {
         return method;

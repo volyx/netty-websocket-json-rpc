@@ -11,9 +11,8 @@ public class RequestImplSerializer implements JsonSerializer<RequestImpl>, JsonD
     public JsonElement serialize(RequestImpl request, Type type, JsonSerializationContext jsonSerializationContext) {
 
         final JsonObject result = new JsonObject();
-        RequestImpl requestImpl = (RequestImpl) request;
-        result.addProperty("method", requestImpl.getMethod());
-        result.addProperty("params", requestImpl.getParams());
+        result.addProperty("method", request.getMethod());
+        result.addProperty("params", request.getParams());
         result.addProperty("id", request.getId());
         return result;
     }

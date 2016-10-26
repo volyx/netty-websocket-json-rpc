@@ -11,9 +11,16 @@ public class BatchRequest implements Request {
     private final long startTime = System.currentTimeMillis();
 
     private List<Request> requests = new ArrayList<>();
+    private String params;
 
     public BatchRequest(@Nonnull String id) {
         this.id = id;
+    }
+
+    @Nonnull
+    @Override
+    public String getParams() {
+        return params;
     }
 
     @Nonnull

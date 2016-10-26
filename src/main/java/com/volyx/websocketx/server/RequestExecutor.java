@@ -1,12 +1,11 @@
 package com.volyx.websocketx.server;
 
-import com.volyx.websocketx.common.Handler;
-import com.volyx.websocketx.common.Request;
-import com.volyx.websocketx.common.RequestImpl;
-import com.volyx.websocketx.common.Result;
+import com.volyx.websocketx.common.*;
 import com.volyx.websocketx.repository.HandlerRepository;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestExecutor {
 
@@ -23,16 +22,28 @@ public class RequestExecutor {
     public Result execute(@Nonnull Request req) throws HandlerNotFoundException {
         final Result result;
         if (req.isBatch()) {
-            result = new Result<>("Batch");
+            BatchRequest batch = (BatchRequest) req;
+            List<Result> results = new ArrayList<>();
+            for (Request r : batch.getRequests()) {
+                results.add(executeRequest((RequestImpl) r));
+            }
+
+            result = new Result<>(results);
         } else {
             RequestImpl request = (RequestImpl) req;
-            final Handler handler = HandlerRepository.getInstance().get(request.getMethod());
-            if (handler == null) {
-                throw new HandlerNotFoundException("Handler " + request.getMethod() + " not found");
-            }
-            result = handler.execute(request);
+            result = executeRequest(request);
         }
 
+        return result;
+    }
+
+    private Result executeRequest(RequestImpl request) throws HandlerNotFoundException {
+        Result result;
+        final Handler handler = HandlerRepository.getInstance().get(request.getMethod());
+        if (handler == null) {
+            throw new HandlerNotFoundException("Handler " + request.getMethod() + " not found");
+        }
+        result = handler.execute(request);
         return result;
     }
 }

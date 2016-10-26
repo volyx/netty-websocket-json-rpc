@@ -1,6 +1,7 @@
 package com.volyx.websocketx;
 
 import com.volyx.websocketx.common.Handler;
+import com.volyx.websocketx.common.Request;
 import com.volyx.websocketx.common.RequestImpl;
 import com.volyx.websocketx.common.Result;
 import com.volyx.websocketx.server.RpcServer;
@@ -16,7 +17,7 @@ public class Main {
         rpcServer.addHandler(new Handler() {
             @Nonnull
             @Override
-            public Result execute(@Nonnull RequestImpl request) {
+            public Result execute(@Nonnull Request request) {
                 return new Result<>(new Date());
             }
 

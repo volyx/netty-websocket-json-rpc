@@ -35,7 +35,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
         final String stringFrame = ((TextWebSocketFrame) frame).text();
         logger.info("{} received {}", ctx.channel(), stringFrame);
-        final Request request = gson.fromJson(stringFrame, RequestImpl.class);
+        final Request request = gson.fromJson(stringFrame, Request.class);
 
         final Result result;
         Response response;
