@@ -34,12 +34,13 @@ function send(message) {
 }
 </script>
 <form onsubmit="return false;">
-    <textarea id="requestText" style="width:300px;height:200px;" name="message">{'method' : 'boo', 'params' : 'foo'}</textarea>
+    <textarea id="requestText" style="width:300px;height:200px;" name="message">{'method' : 'hello', 'params' : 'foo'}</textarea>
     <br>
     <input type="button" value="Send Web Socket Data" onclick="send(this.form.message.value)" />
     <h3>Output</h3>
     <textarea id="responseText" style="width:500px;height:300px;"></textarea>
 </form>
+
 
 </body>
 </html>
