@@ -24,7 +24,7 @@ public class RequestImpl implements Request {
     @Override
     @Nonnull
     public String getParams() {
-        return method;
+        return params;
     }
     @Override
     @Nonnull

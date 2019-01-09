@@ -9,6 +9,9 @@ import com.volyx.rpc.json.Json;
 import com.volyx.rpc.server.RpcServer;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.ServerSocket;
 import java.util.Date;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -18,7 +21,8 @@ public class MainTest {
 
     @Test
     public void test() {
-        RpcServer rpcServer = RpcServer.builder().port(8080).build();
+        final int port = findRandomOpenPortOnAllLocalInterfaces();
+        RpcServer rpcServer = RpcServer.builder().port(port).build();
 
         rpcServer.addHandler(new Handler() {
             @Nonnull
@@ -34,7 +38,7 @@ public class MainTest {
             }
         });
 
-        RpcClient client = RpcClient.builder().port(8080).build();
+        RpcClient client = RpcClient.builder().port(port).build();
         client.addHandler(new Handler() {
             @Nonnull
             @Override
@@ -58,7 +62,7 @@ public class MainTest {
 
     }
 
-    @Test
+//    @Test
     public void perfomance() {
         RpcServer rpcServer = RpcServer.builder().port(8080).build();
 
@@ -81,7 +85,7 @@ public class MainTest {
         });
 
         long start = System.currentTimeMillis();
-        int count = 1000000;
+        int count = 1_000_000;
         Result result = null;
         final Timer timer = registry.timer(name(this.getClass(), "get-requests"));
         for (int i = 0; i < count; i++) {
@@ -91,12 +95,23 @@ public class MainTest {
             } finally {
                 context.stop();
             }
-            if (i % 10000 == 0) {
-                System.out.println((i / 10000) + "%");
+            if (i % 10_000 == 0) {
+                System.out.println((i / 10_000) + "%");
             }
         }
         Assert.assertEquals(count - 1, result.getValue());
         System.out.println(result.getValue());
         System.out.println("Time " + (System.currentTimeMillis() - start) + " millis");
+    }
+
+    private static int findRandomOpenPortOnAllLocalInterfaces() {
+        try (
+                ServerSocket socket = new ServerSocket(0)
+        ) {
+            return socket.getLocalPort();
+
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
